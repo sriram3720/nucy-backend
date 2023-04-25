@@ -1,0 +1,34 @@
+[
+    {
+        "name":"nokia",
+        "price":267.56,
+        "description":"nokia is powerful device",
+        "ratings":4.5,
+        "images":[
+            {
+                "image":"product_876644.jpg"
+            }
+        ],
+        "category":"Mobile Phones",
+        "seller":"Amazon",
+        "stock":5,
+        "numOfReviews":15,
+        "reviews":[]
+    },
+    {
+        "name":"samsung",
+        "price":1267.56,
+        "description":"samsung is icon device",
+        "ratings":4.5,
+        "images":[
+            {
+                "image":"product_876644.jpg"
+            }
+        ],
+        "category":"Mobile Phones",
+        "seller":"Amazon",
+        "stock":5,
+        "numOfReviews":15,
+        "reviews":[]
+    }
+]
