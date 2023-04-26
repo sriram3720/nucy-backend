@@ -2,6 +2,7 @@ const Product = require('../models/productModel')
 const APIFeatures = require('../utils/apiFeature');
 
 // Get Product - /api/v1/product
+
 exports.getProducts= async(req,res,next)=>{
     try{
       
@@ -95,3 +96,45 @@ exports.deleteProduct = async (req,res,next)=>{
            })
     }
 }
+// search and PAginate   -  /api/v1/product/:id - DELETE
+exports.searchAndPaginateProducts = async (req, res) => {
+  const keyword = req.query.keyword; 
+  const page = parseInt(req.query.page) || 1; 
+  const limit = parseInt(req.query.limit) || 10; 
+
+  try {
+   
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: keyword, $options: 'i' } }, 
+        { description: { $regex: keyword, $options: 'i' } },
+      ],
+    })
+      .skip(skip)
+      .limit(limit);
+
+   
+    const totalCount = await Product.countDocuments({
+      $or: [
+        { name: { $regex: keyword, $options: 'i' } },
+        { description: { $regex: keyword, $options: 'i' } }, 
+      ],
+    });
+
+    
+    const totalPages = Math.ceil(totalCount / limit);
+
+   
+    res.status(200).json({
+      products,
+      page,
+      limit,
+      totalCount,
+      totalPages,
+    });
+  } catch (err) {
+  
+    console.error('Failed to search and paginate products:', err);
+    res.status(500).json({ error: 'Failed to search and paginate products' });
+  }
+};
