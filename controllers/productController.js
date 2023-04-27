@@ -96,31 +96,50 @@ exports.deleteProduct = async (req,res,next)=>{
            })
     }
 }
-// search and PAginate   -  /api/v1/getAllProduct/ - DELETE
-exports.searchAndPaginateProducts = async (req, res) => {
-  const keyword = req.query.keyword; 
+
+// search and Paginate   -  /api/v1/getproduct/ - GET
+exports.searchAndPaginateProducts = async (req, res,next) => {
+  
+ const category = req.query.category;
+  const keyword = req.query.keyword;
+  const price= parseInt(req.query.price) 
   const page = parseInt(req.query.page) || 1; 
-  const limit = parseInt(req.query.limit) || 10; 
+  const limit = parseInt(req.query.limit) || 10;
+
+  const search =  keyword ? {
+    name: { $regex: keyword, $options: 'i' }
+  }:{};
+   
+  const sort =  category ? {
+    category:{$regex:category, $options:'i' }
+  }:{};
+
+  const filterByPrice=   price ? {
+    price:{$lte:price}
+  }:{};
+
+  const filter = {
+    ...search,
+    ...sort,
+    ...filterByPrice
+  }
 
   try {
    
     const products = await Product.find({
       $or: [
-        { name: { $regex: keyword, $options: 'i' } }, 
-        { description: { $regex: keyword, $options: 'i' } },
-      ],
+        filter
+      ]
     })
-      .skip(skip)
+      .skip((page-1)*limit)
       .limit(limit);
 
-   
     const totalCount = await Product.countDocuments({
       $or: [
-        { name: { $regex: keyword, $options: 'i' } },
-        { description: { $regex: keyword, $options: 'i' } }, 
-      ],
+        filter
+      
+      ]
     });
-
     
     const totalPages = Math.ceil(totalCount / limit);
 
@@ -133,7 +152,6 @@ exports.searchAndPaginateProducts = async (req, res) => {
       totalPages,
     });
   } catch (err) {
-  
     console.error('Failed to search and paginate products:', err);
     res.status(500).json({ error: 'Failed to search and paginate products' });
   }
