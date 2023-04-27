@@ -96,7 +96,7 @@ exports.deleteProduct = async (req,res,next)=>{
            })
     }
 }
-// search and PAginate   -  /api/v1/product/:id - DELETE
+// search and PAginate   -  /api/v1/getAllProduct/ - DELETE
 exports.searchAndPaginateProducts = async (req, res) => {
   const keyword = req.query.keyword; 
   const page = parseInt(req.query.page) || 1; 
